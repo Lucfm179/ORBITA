@@ -21,6 +21,8 @@ export interface FleetAsset {
   object_type: string;
   status: 'operational' | 'degraded' | 'critical';
   active_conjunctions: number;
+  apogee_km?: number;
+  perigee_km?: number;
 }
 
 export interface CatalogStats {

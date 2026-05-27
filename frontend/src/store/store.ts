@@ -16,6 +16,7 @@ interface OrbitaStore {
   backgroundStyle: 'stars' | 'deep' | 'empty';
   timeScale: number;
   autoRotate: boolean;
+  isAboutOpen: boolean;
   loadAllData: () => Promise<void>;
   setSelectedSatellite: (id: number | null) => void;
   setSelectedConjunction: (id: string | null) => void;
@@ -24,6 +25,7 @@ interface OrbitaStore {
   setBackgroundStyle: (style: 'stars' | 'deep' | 'empty') => void;
   setTimeScale: (scale: number) => void;
   setAutoRotate: (value: boolean) => void;
+  setIsAboutOpen: (value: boolean) => void;
 }
 
 export const useStore = create<OrbitaStore>((set) => ({
@@ -40,6 +42,7 @@ export const useStore = create<OrbitaStore>((set) => ({
   backgroundStyle: 'stars',
   timeScale: 1, // default to 1x (Real-Time)
   autoRotate: true, // default to auto-rotating camera
+  isAboutOpen: false,
   
   loadAllData: async () => {
     set((state) => ({ isLoading: state.tles.length === 0, error: null }));
@@ -63,4 +66,5 @@ export const useStore = create<OrbitaStore>((set) => ({
   setBackgroundStyle: (style) => set({ backgroundStyle: style }),
   setTimeScale: (scale) => set({ timeScale: scale }),
   setAutoRotate: (value) => set({ autoRotate: value }),
+  setIsAboutOpen: (value) => set({ isAboutOpen: value }),
 }));

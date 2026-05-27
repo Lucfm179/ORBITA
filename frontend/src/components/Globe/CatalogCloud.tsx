@@ -24,7 +24,7 @@ export function CatalogCloud({ positions, colors, catalogSatsRef, simTimeRef }: 
   useEffect(() => {
     if (geoRef.current && positions.length > 0 && colors.length > 0) {
       geoRef.current.setAttribute('position', new THREE.BufferAttribute(positions.slice(), 3));
-      geoRef.current.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+      geoRef.current.setAttribute('color', new THREE.BufferAttribute(colors.slice(), 3));
       geoRef.current.computeBoundingSphere();
     }
   }, [positions, colors]);

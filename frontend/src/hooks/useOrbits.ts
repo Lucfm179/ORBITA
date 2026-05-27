@@ -55,12 +55,12 @@ export function useOrbits() {
     const catalogSats = sats.filter(s => !s.isFleet);
     const fleetSats = sats.filter(s => s.isFleet);
     
-    // Take all active satellites first, then fill up with debris to a maximum of 3000
-    const activeCatalog = catalogSats.filter(s => s.object_type === 'payload');
-    const debrisCatalog = catalogSats.filter(s => s.object_type !== 'payload');
+    // Take all active satellites first, then fill up wit    // Balanced mix: up to 1500 active satellites and up to 1500 debris objects
+    const activeCatalog = catalogSats.filter(s => (s.object_type || '').toLowerCase() === 'payload');
+    const debrisCatalog = catalogSats.filter(s => (s.object_type || '').toLowerCase() !== 'payload');
     const limitedCatalog = [
-      ...activeCatalog,
-      ...debrisCatalog.slice(0, Math.max(0, 3000 - activeCatalog.length))
+      ...activeCatalog.slice(0, 1500),
+      ...debrisCatalog.slice(0, 1500)
     ];
     catalogSatsRef.current = limitedCatalog;
     
@@ -80,13 +80,14 @@ export function useOrbits() {
           catalogPos[ci * 3 + 1] = pv.position.z / EARTH_RADIUS_KM;
           catalogPos[ci * 3 + 2] = -pv.position.y / EARTH_RADIUS_KM;
           
-          // Debris gets amber color, active gets cyan color
-          const isDebris = sat.object_type === 'DEBRIS' || sat.name.includes('DEB') || sat.name.includes('R/B');
+          // Debris gets amber color, active gets cyan color (case-insensitive check)
+          const nameUpper = sat.name.toUpperCase();
+          const typeLower = (sat.object_type || '').toLowerCase();
+          const isDebris = typeLower === 'debris' || typeLower === 'rocket body' || nameUpper.includes('DEB') || nameUpper.includes('R/B');
           if (isDebris) {
             // #f6a623 (amber) -> RGB 246, 166, 35
             catalogCol[ci * 3] = 0.965;
-            catalogCol[ci * 3 + 1] = 0.651;
-            catalogCol[ci * 3 + 2] = 0.137;
+;
           } else {
             // #3fe6d6 (cyan) -> RGB 63, 230, 214
             catalogCol[ci * 3] = 0.247;
