@@ -78,21 +78,8 @@ DEMO_CONJUNCTIONS: Dict[str, Dict[str, Any]] = {
 }
 
 
-def _initialize_conjunctions() -> Dict[str, Dict[str, Any]]:
-    now = datetime.now(timezone.utc)
-    result = {}
-    for cj_id, blueprint in DEMO_CONJUNCTIONS.items():
-        val = blueprint.copy()
-        offset_hrs = val.pop("tca_offset_hours")
-        offset_mins = val.pop("tca_offset_minutes")
-        val["tca"] = now + timedelta(hours=offset_hrs, minutes=offset_mins)
-        val["computed_at"] = now
-        result[cj_id] = val
-    return result
-
-
 # Global store for active conjunctions: cj_id -> conjunction_dict
-CONJUNCTIONS: Dict[str, Dict[str, Any]] = _initialize_conjunctions()
+CONJUNCTIONS: Dict[str, Dict[str, Any]] = {}
 
 
 
