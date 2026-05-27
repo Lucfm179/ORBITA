@@ -15,27 +15,22 @@ interface Props {
   positions: Float32Array;
   colors: Float32Array;
   catalogSatsRef: React.MutableRefObject<SatData[]>;
+  simTimeRef: React.MutableRefObject<number>;
 }
 
-export function CatalogCloud({ positions, colors, catalogSatsRef }: Props) {
+export function CatalogCloud({ positions, colors, catalogSatsRef, simTimeRef }: Props) {
   const geoRef = useRef<THREE.BufferGeometry>(null!);
-  const simTimeRef = useRef<number>(Date.now());
 
   useEffect(() => {
     if (geoRef.current && positions.length > 0 && colors.length > 0) {
-      // Create a copy to prevent mutating the original static array
       geoRef.current.setAttribute('position', new THREE.BufferAttribute(positions.slice(), 3));
       geoRef.current.setAttribute('color', new THREE.BufferAttribute(colors, 3));
       geoRef.current.computeBoundingSphere();
     }
   }, [positions, colors]);
 
-  useFrame((_, delta) => {
-    if (!geoRef.current || !catalogSatsRef.current.length) return;
-
-    // Advance simulation time: 10,000 ms of sim time per frame (600,000 ms per second)
-    // to match the speed of the fleet satellites
-    simTimeRef.current += delta * 600000;
+  useFrame(() => {
+    if (!geoRef.current || !catalogSatsRef.current.length || !simTimeRef || !simTimeRef.current) return;
 
     const attr = geoRef.current.getAttribute('position') as THREE.BufferAttribute;
     if (!attr) return;

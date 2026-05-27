@@ -16,6 +16,7 @@ interface SatData {
 
 export function useOrbits() {
   const tles = useStore((s) => s.tles);
+  const timeScale = useStore((s) => s.timeScale);
   const satDataRef = useRef<SatData[]>([]);
   const catalogSatsRef = useRef<SatData[]>([]);
   const [catalogPositions, setCatalogPositions] = useState<Float32Array>(new Float32Array(0));
@@ -24,6 +25,13 @@ export function useOrbits() {
   const [fleetPositionsState, setFleetPositionsState] = useState<Float32Array>(new Float32Array(0));
   const frameCounter = useRef(0);
   const simTimeRef = useRef<number>(Date.now());
+
+  // Reset simulation clock to real-time Date.now() when timeScale is set back to 1
+  useEffect(() => {
+    if (timeScale === 1) {
+      simTimeRef.current = Date.now();
+    }
+  }, [timeScale]);
 
   useEffect(() => {
     if (!tles.length) return;
@@ -100,11 +108,11 @@ export function useOrbits() {
     setFleetPositionsState(initialFleetPos);
   }, [tles]);
 
+  const lastTimeRef = useRef<number>(performance.now());
+
   const propagateAll = useCallback((updateState: boolean) => {
     if (satDataRef.current.length === 0) return;
     
-    // Advance simulation time by 20 seconds on each call for smooth motion
-    simTimeRef.current += 20000;
     const now = new Date(simTimeRef.current);
     const gmst = satellite.gstime(now);
     
@@ -138,6 +146,14 @@ export function useOrbits() {
 
   useFrame(() => {
     frameCounter.current++;
+    
+    const nowTime = performance.now();
+    const elapsedMs = nowTime - lastTimeRef.current;
+    lastTimeRef.current = nowTime;
+
+    // Smoothly advance simulation time
+    simTimeRef.current += elapsedMs * timeScale;
+
     // Propagate the 4 fleet assets every 2 frames for ultra-smooth movement
     // And update state for HTML labels every 10 frames to keep React performant
     const shouldUpdateState = frameCounter.current % 10 === 0;
@@ -152,7 +168,8 @@ export function useOrbits() {
     catalogSatsRef,
     fleetPositionsRef: fleetPosRef,
     fleetPositionsState,
-    fleetData: satDataRef
+    fleetData: satDataRef,
+    simTimeRef
   };
 }
 

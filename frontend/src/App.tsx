@@ -6,6 +6,7 @@ import { FleetPanel } from './components/FleetPanel/FleetPanel';
 import { AlertFeed } from './components/AlertFeed/AlertFeed';
 import { LoadingScreen } from './components/LoadingScreen/LoadingScreen';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { VisualSettings } from './components/VisualSettings/VisualSettings';
 
 function App() {
   const isLoading = useStore((s) => s.isLoading);
@@ -48,6 +49,10 @@ function App() {
       
       <ErrorBoundary fallbackTitle="AlertFeed">
         <AlertFeed />
+      </ErrorBoundary>
+
+      <ErrorBoundary fallbackTitle="VisualSettings">
+        <VisualSettings />
       </ErrorBoundary>
 
       {/* Flashing warning banner at the top center */}

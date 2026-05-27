@@ -1,7 +1,5 @@
-import { useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stars } from '@react-three/drei';
-import * as THREE from 'three';
 import { Earth } from './Earth';
 import { Atmosphere } from './Atmosphere';
 import { CatalogCloud } from './CatalogCloud';
@@ -14,7 +12,7 @@ import { useStore } from '../../store/store';
 const FLEET_IDS_ARR = [47699, 56215, 22490, 25504];
 
 function Scene() {
-  const { catalogPositions, catalogColors, catalogSatsRef, fleetPositionsRef, fleetPositionsState, fleetData } = useOrbits();
+  const { catalogPositions, catalogColors, catalogSatsRef, fleetPositionsRef, fleetPositionsState, fleetData, simTimeRef } = useOrbits();
   const selectedConjunctionId = useStore((s) => s.selectedConjunction);
   const conjunctions = useStore((s) => s.conjunctions);
 
@@ -36,25 +34,34 @@ function Scene() {
     }
   }
 
-  const rigRef = useRef<THREE.Group>(null!);
+  const backgroundStyle = useStore((s) => s.backgroundStyle);
+  const autoRotate = useStore((s) => s.autoRotate);
 
-  useFrame(() => {
-    if (rigRef.current) {
-      rigRef.current.rotation.y += 0.0006; // 0.0006 rad/frame continuous rotation matches the mockup speed
-    }
-  });
+  // Background color based on style
+  const bgColor = backgroundStyle === 'stars' 
+    ? '#04060f' 
+    : backgroundStyle === 'deep' 
+      ? '#010206' 
+      : '#000000';
 
   return (
     <>
-      <color attach="background" args={['#04060f']} />
-      <Stars radius={300} depth={60} count={8000} factor={4} saturation={0} fade speed={0.5} />
+      <color attach="background" args={[bgColor]} />
+      
+      {backgroundStyle === 'stars' && (
+        <Stars radius={300} depth={60} count={8000} factor={4} saturation={0} fade speed={0.5} />
+      )}
+      {backgroundStyle === 'deep' && (
+        <Stars radius={200} depth={50} count={12000} factor={6} saturation={0.5} fade speed={1.5} />
+      )}
+      
       <ambientLight intensity={0.25} />
       <directionalLight position={[-5, 2.5, 4]} intensity={1.5} />
       
-      <group ref={rigRef}>
-        <Earth />
+      <group>
+        <Earth simTimeRef={simTimeRef} />
         <Atmosphere />
-        <CatalogCloud positions={catalogPositions} colors={catalogColors} catalogSatsRef={catalogSatsRef} />
+        <CatalogCloud positions={catalogPositions} colors={catalogColors} catalogSatsRef={catalogSatsRef} simTimeRef={simTimeRef} />
         <FleetSatellites positionsRef={fleetPositionsRef} positionsState={fleetPositionsState} fleetData={fleetData} />
         {markerPosition && <ConjunctionMarker position={markerPosition} />}
       </group>
@@ -66,6 +73,8 @@ function Scene() {
         enableDamping
         dampingFactor={0.05}
         rotateSpeed={0.5}
+        autoRotate={autoRotate}
+        autoRotateSpeed={0.2} // very slow camera orbit (0.2 is subtle and realistic)
       />
     </>
   );
