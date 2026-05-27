@@ -60,23 +60,26 @@ export function AlertFeed() {
     }
   };
 
-  // Compute fleet risk index data
+  // Compute fleet risk index data dynamically based on actual status
   const getFleetRisk = () => {
-    const states = fleet.map(f => f.status);
-    if (states.includes('critical')) {
+    const criticalAsset = fleet.find(f => f.status === 'critical');
+    const degradedAssets = fleet.filter(f => f.status === 'degraded');
+    
+    if (criticalAsset) {
       return {
         riskVal: 'CRÍTICO',
         riskFillWidth: '86%',
         riskColor: 'var(--accent-red)',
-        riskTxt: 'MANOBRA EVASIVA RECOMENDADA — AMAZONIA 1'
+        riskTxt: `MANOBRA EVASIVA RECOMENDADA — ${criticalAsset.name.toUpperCase()}`
       };
     }
-    if (states.includes('degraded')) {
+    if (degradedAssets.length > 0) {
+      const count = degradedAssets.length;
       return {
         riskVal: 'MÉDIO',
         riskFillWidth: '52%',
         riskColor: 'var(--accent-amber)',
-        riskTxt: 'MONITORAMENTO ATIVO DE 1 ATIVO'
+        riskTxt: `MONITORAMENTO ATIVO — ${count} ATIVO${count > 1 ? 'S' : ''}`
       };
     }
     return {

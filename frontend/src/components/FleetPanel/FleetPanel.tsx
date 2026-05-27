@@ -28,11 +28,11 @@ export function FleetPanel() {
               statusLabel = 'EM OBSERV.';
             }
 
-            // Hardcode or extract simple orbit label for mockup style
-            let orbitLabel = 'LEO ~540 KM';
-            if (asset.norad_id === 56215) orbitLabel = 'LEO ~780 KM';
-            if (asset.norad_id === 22490) orbitLabel = 'LEO ~650 KM';
-            if (asset.norad_id === 25504) orbitLabel = 'LEO ~750 KM';
+            // Calculate dynamic orbit label based on physical apogee and perigee
+            const avgAltitude = asset.apogee_km && asset.perigee_km
+              ? Math.round((asset.apogee_km + asset.perigee_km) / 2)
+              : 600;
+            const orbitLabel = `LEO ~${avgAltitude} KM`;
 
             return (
               <div
