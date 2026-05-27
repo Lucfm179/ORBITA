@@ -55,7 +55,7 @@ export function useOrbits() {
     const catalogSats = sats.filter(s => !s.isFleet);
     const fleetSats = sats.filter(s => s.isFleet);
     
-    // Take all active satellites first, then fill up wit    // Balanced mix: up to 1500 active satellites and up to 1500 debris objects
+    // Balanced mix: up to 1500 active satellites and up to 1500 debris objects
     const activeCatalog = catalogSats.filter(s => (s.object_type || '').toLowerCase() === 'payload');
     const debrisCatalog = catalogSats.filter(s => (s.object_type || '').toLowerCase() !== 'payload');
     const limitedCatalog = [
