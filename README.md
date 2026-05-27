@@ -10,23 +10,23 @@
 
 ---
 
-## 🚀 O que é o ORBITA?
+## O que é o ORBITA?
 
 A órbita baixa da Terra (LEO) está congestionada com dezenas de milhares de objetos rastreados.
 Uma colisão pode destruir satélites essenciais e disparar uma reação em cadeia (síndrome de Kessler).
 
 O **ORBITA** é uma plataforma SaaS que:
 
-- 🌍 **Visualiza** o tráfego orbital em um globo 3D interativo
-- 🔍 **Detecta** conjunções (aproximações perigosas) entre satélites
-- 🎯 **Prioriza** alertas com IA, separando risco real de ruído
-- 📊 **Recomenda** ações ao operador de satélite
+-  **Visualiza** o tráfego orbital em um globo 3D interativo
+-  **Detecta** conjunções (aproximações perigosas) entre satélites
+-  **Prioriza** alertas com IA, separando risco real de ruído
+-  **Recomenda** ações ao operador de satélite
 
 **Usuário-alvo:** operadores de satélite de pequeno e médio porte.
 
 ---
 
-## 🏗️ Arquitetura
+## Arquitetura
 
 ```
    CelesTrak (catálogo TLE público)
@@ -46,7 +46,7 @@ O **ORBITA** é uma plataforma SaaS que:
 
 ---
 
-## 📡 Frota de Demonstração
+## Frota de Demonstração
 
 | Satélite   | NORAD ID | Missão                        |
 |------------|----------|-------------------------------|
@@ -57,7 +57,7 @@ O **ORBITA** é uma plataforma SaaS que:
 
 ---
 
-## 🛠️ Stack Tecnológica
+## Stack Tecnológica
 
 | Camada     | Tecnologias                                             |
 |------------|---------------------------------------------------------|
@@ -73,7 +73,7 @@ O **ORBITA** é uma plataforma SaaS que:
 
 ---
 
-## <a name="como-rodar"></a>🚀 Como Rodar
+## <a name="como-rodar"></a> Como Rodar
 
 ### Pré-requisitos
 
@@ -128,7 +128,7 @@ Se as texturas não estiverem disponíveis, o globo usa uma esfera azul como fal
 
 ---
 
-## <a name="api"></a>📋 API
+## <a name="api"></a> API
 
 Base: `http://localhost:8000/api`
 
@@ -160,6 +160,6 @@ Base: `http://localhost:8000/api`
 
 ---
 
-## 📄 Licença
+## Licença
 
 Projeto acadêmico — FIAP Global Solution 2026.
