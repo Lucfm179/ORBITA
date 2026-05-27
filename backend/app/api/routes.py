@@ -28,21 +28,6 @@ logger = logging.getLogger("orbita.api.routes")
 router = APIRouter(prefix="/api")
 
 
-@router.get("/test_hello")
-def get_test_hello():
-    import app.core.tle
-    entry = app.core.tle.CATALOG.get(33785)
-    if not entry:
-        return {"error": "Satellite 33785 not found in catalog", "keys": list(app.core.tle.CATALOG.keys())[:10]}
-    raw_rec = entry.get("raw")
-    line1, line2 = app.core.tle.reconstruct_tle_lines(raw_rec)
-    return {
-        "raw_rec": raw_rec,
-        "line1": line1,
-        "line2": line2
-    }
-
-
 @router.get("/health", response_model=HealthResponse)
 def get_health():
     """Get API health and catalog status."""
@@ -121,6 +106,8 @@ def get_fleet_assets():
                 object_type="payload",
                 status=status,
                 active_conjunctions=len(asset_conjs),
+                apogee_km=asset.get("apogee_km", 0.0),
+                perigee_km=asset.get("perigee_km", 0.0),
             )
         )
     return response

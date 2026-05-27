@@ -22,9 +22,8 @@ from app.core.probability import monte_carlo_probability
 
 logger = logging.getLogger("orbita.screening")
 
-# Global store for active conjunctions: cj_id -> conjunction_dict
-# Initialized with realistic demo data so the dashboard is populated immediately.
-CONJUNCTIONS: Dict[str, Dict[str, Any]] = {
+# Blueprint for realistic demo data to avoid code duplication
+DEMO_CONJUNCTIONS: Dict[str, Dict[str, Any]] = {
     "cj_demo1": {
         "id": "cj_demo1",
         "primary": {"norad_id": 47699, "name": "AMAZONIA-1", "type": "payload"},
@@ -32,12 +31,12 @@ CONJUNCTIONS: Dict[str, Dict[str, Any]] = {
         "primary_type": "payload",
         "secondary_type": "debris",
         "altitude_km": 750.0,
-        "tca": datetime.now(timezone.utc) + timedelta(hours=2, minutes=15),
+        "tca_offset_hours": 2,
+        "tca_offset_minutes": 15,
         "miss_distance_km": 0.42,
         "relative_velocity_kms": 14.5,
         "probability": 0.0382,
         "tle_age_hours": 4.2,
-        "computed_at": datetime.now(timezone.utc),
         "risk_score": 0.94,
         "risk_tier": "alto",
         "recommended_action": "avaliar manobra de desvio imediatamente",
@@ -49,12 +48,12 @@ CONJUNCTIONS: Dict[str, Dict[str, Any]] = {
         "primary_type": "payload",
         "secondary_type": "debris",
         "altitude_km": 500.0,
-        "tca": datetime.now(timezone.utc) + timedelta(hours=14, minutes=45),
+        "tca_offset_hours": 14,
+        "tca_offset_minutes": 45,
         "miss_distance_km": 2.15,
         "relative_velocity_kms": 9.2,
         "probability": 0.00045,
         "tle_age_hours": 12.8,
-        "computed_at": datetime.now(timezone.utc),
         "risk_score": 0.55,
         "risk_tier": "medio",
         "recommended_action": "monitorar evolucao da orbita",
@@ -66,17 +65,34 @@ CONJUNCTIONS: Dict[str, Dict[str, Any]] = {
         "primary_type": "payload",
         "secondary_type": "payload",
         "altitude_km": 750.0,
-        "tca": datetime.now(timezone.utc) + timedelta(hours=36, minutes=10),
+        "tca_offset_hours": 36,
+        "tca_offset_minutes": 10,
         "miss_distance_km": 8.45,
         "relative_velocity_kms": 4.1,
         "probability": 0.0,
         "tle_age_hours": 18.2,
-        "computed_at": datetime.now(timezone.utc),
         "risk_score": 0.12,
         "risk_tier": "baixo",
         "recommended_action": "sem acao necessaria - acompanhar proximo relatorio",
     }
 }
+
+
+def _initialize_conjunctions() -> Dict[str, Dict[str, Any]]:
+    now = datetime.now(timezone.utc)
+    result = {}
+    for cj_id, blueprint in DEMO_CONJUNCTIONS.items():
+        val = blueprint.copy()
+        offset_hrs = val.pop("tca_offset_hours")
+        offset_mins = val.pop("tca_offset_minutes")
+        val["tca"] = now + timedelta(hours=offset_hrs, minutes=offset_mins)
+        val["computed_at"] = now
+        result[cj_id] = val
+    return result
+
+
+# Global store for active conjunctions: cj_id -> conjunction_dict
+CONJUNCTIONS: Dict[str, Dict[str, Any]] = _initialize_conjunctions()
 
 
 
@@ -270,59 +286,16 @@ def run_screening(hours: int = 72) -> List[Dict[str, Any]]:
 
     if len(new_conjunctions) == 0:
         logger.info("No real conjunctions found. Ingesting simulated demo alerts for dashboard display.")
-        new_conjunctions["cj_demo1"] = {
-            "id": "cj_demo1",
-            "primary": {"norad_id": 47699, "name": "AMAZONIA-1", "type": "payload"},
-            "secondary": {"norad_id": 99001, "name": "COSMOS 2251 DEBRIS", "type": "debris"},
-            "primary_type": "payload",
-            "secondary_type": "debris",
-            "altitude_km": 750.0,
-            "tca": start_dt + timedelta(hours=2, minutes=15),
-            "miss_distance_km": 0.42,
-            "relative_velocity_kms": 14.5,
-            "probability": 0.0382,
-            "tle_age_hours": 4.2,
-            "computed_at": start_dt,
-            "risk_score": 0.94,
-            "risk_tier": "alto",
-            "recommended_action": "avaliar manobra de desvio imediatamente",
-        }
-        new_conjunctions["cj_demo2"] = {
-            "id": "cj_demo2",
-            "primary": {"norad_id": 56215, "name": "VCUB-1", "type": "payload"},
-            "secondary": {"norad_id": 99002, "name": "FENGYUN 1C DEBRIS", "type": "debris"},
-            "primary_type": "payload",
-            "secondary_type": "debris",
-            "altitude_km": 500.0,
-            "tca": start_dt + timedelta(hours=14, minutes=45),
-            "miss_distance_km": 2.15,
-            "relative_velocity_kms": 9.2,
-            "probability": 0.00045,
-            "tle_age_hours": 12.8,
-            "computed_at": start_dt,
-            "risk_score": 0.55,
-            "risk_tier": "medio",
-            "recommended_action": "monitorar evolucao da orbita",
-        }
-        new_conjunctions["cj_demo3"] = {
-            "id": "cj_demo3",
-            "primary": {"norad_id": 22490, "name": "SCD-1", "type": "payload"},
-            "secondary": {"norad_id": 99003, "name": "GLOBALSTAR M043", "type": "payload"},
-            "primary_type": "payload",
-            "secondary_type": "payload",
-            "altitude_km": 750.0,
-            "tca": start_dt + timedelta(hours=36, minutes=10),
-            "miss_distance_km": 8.45,
-            "relative_velocity_kms": 4.1,
-            "probability": 0.0,
-            "tle_age_hours": 18.2,
-            "computed_at": start_dt,
-            "risk_score": 0.12,
-            "risk_tier": "baixo",
-            "recommended_action": "sem acao necessaria - acompanhar proximo relatorio",
-        }
+        for cj_id, blueprint in DEMO_CONJUNCTIONS.items():
+            val = blueprint.copy()
+            offset_hrs = val.pop("tca_offset_hours")
+            offset_mins = val.pop("tca_offset_minutes")
+            val["tca"] = start_dt + timedelta(hours=offset_hrs, minutes=offset_mins)
+            val["computed_at"] = start_dt
+            new_conjunctions[cj_id] = val
 
-    CONJUNCTIONS = new_conjunctions
+    CONJUNCTIONS.clear()
+    CONJUNCTIONS.update(new_conjunctions)
     logger.info("Screening run complete. Found %d conjunctions.", len(CONJUNCTIONS))
     return list(CONJUNCTIONS.values())
 

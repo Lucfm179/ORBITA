@@ -68,6 +68,8 @@ class FleetAsset(BaseModel):
     object_type: str = "payload"
     status: str = Field("operational", description="operational | degraded | critical")
     active_conjunctions: int = Field(0, description="Number of active conjunction alerts")
+    apogee_km: float = Field(0.0, description="Apogee altitude in kilometers")
+    perigee_km: float = Field(0.0, description="Perigee altitude in kilometers")
 
 
 # ---------------------------------------------------------------------------
