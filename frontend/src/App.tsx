@@ -7,6 +7,7 @@ import { AlertFeed } from './components/AlertFeed/AlertFeed';
 import { LoadingScreen } from './components/LoadingScreen/LoadingScreen';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { VisualSettings } from './components/VisualSettings/VisualSettings';
+import { AboutModal } from './components/AboutModal/AboutModal';
 
 function App() {
   const isLoading = useStore((s) => s.isLoading);
@@ -53,6 +54,10 @@ function App() {
 
       <ErrorBoundary fallbackTitle="VisualSettings">
         <VisualSettings />
+      </ErrorBoundary>
+
+      <ErrorBoundary fallbackTitle="AboutModal">
+        <AboutModal />
       </ErrorBoundary>
 
       {/* Flashing warning banner at the top center */}
