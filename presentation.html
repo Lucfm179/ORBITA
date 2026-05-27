@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ORBITA — Inteligência de Tráfego Orbital</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #04060f;
+      --bg-card: rgba(8, 14, 30, 0.75);
+      --accent-cyan: #3fe6d6;
+      --accent-amber: #f6a623;
+      --accent-red: #ff3366;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --border-color: rgba(63, 230, 214, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Estilo de Estrelas de Fundo */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        radial-gradient(1px 1px at 20px 30px, #fff, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 150px 50px, #fff, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 50px 200px, rgba(255,255,255,0.7), rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 300px 120px, rgba(255,255,255,0.8), rgba(0,0,0,0));
+      background-repeat: repeat;
+      background-size: 400px 400px;
+      opacity: 0.25;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .glow-glow {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(63, 230, 214, 0.08) 0%, rgba(0,0,0,0) 70%);
+      top: -200px;
+      right: -200px;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* HEADER */
+    header {
+      padding: 30px 0;
+      border-bottom: 1px solid rgba(63, 230, 214, 0.1);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 0.3em;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(63, 230, 214, 0.4);
+    }
+
+    .logo-subtitle {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 8px;
+      letter-spacing: 0.18em;
+      color: var(--accent-cyan);
+      margin-top: 2px;
+    }
+
+    nav a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 11px;
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 0.15em;
+      margin-left: 30px;
+      transition: color 0.3s;
+      text-transform: uppercase;
+    }
+
+    nav a:hover {
+      color: var(--accent-cyan);
+      text-shadow: 0 0 8px rgba(63, 230, 214, 0.3);
+    }
+
+    /* HERO SECTION */
+    .hero {
+      padding: 100px 0 80px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      background: rgba(63, 230, 214, 0.08);
+      border: 1px solid var(--border-color);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .hero h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      line-height: 1.2;
+      max-width: 800px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(135deg, #fff 0%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      font-size: 16px;
+      color: var(--text-secondary);
+      max-width: 650px;
+      margin-bottom: 40px;
+      font-weight: 300;
+    }
+
+    .cta-button {
+      display: inline-block;
+      padding: 14px 28px;
+      background: var(--accent-cyan);
+      color: #04060f;
+      text-decoration: none;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      box-shadow: 0 0 20px rgba(63, 230, 214, 0.35);
+      transition: all 0.3s;
+      border: 1px solid var(--accent-cyan);
+    }
+
+    .cta-button:hover {
+      background: transparent;
+      color: var(--accent-cyan);
+      box-shadow: 0 0 35px rgba(63, 230, 214, 0.6);
+      transform: translateY(-2px);
+    }
+
+    /* INTERACTIVE CONSOLE PREVIEW */
+    .preview-box {
+      width: 100%;
+      max-width: 960px;
+      margin: 20px auto 100px auto;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      padding: 4px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    .preview-header {
+      background: rgba(8, 14, 30, 0.9);
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(63, 230, 214, 0.1);
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .window-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .window-dot.red { background: var(--accent-red); }
+    .window-dot.yellow { background: var(--accent-amber); }
+    .window-dot.green { background: var(--accent-cyan); }
+
+    .preview-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: var(--text-secondary);
+    }
+
+    .preview-screen {
+      width: 100%;
+      height: 380px;
+      background: #020409;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Simulando o globo */
+    .preview-globe {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #0c1c3a 0%, #030814 100%);
+      border: 1px dashed rgba(63, 230, 214, 0.35);
+      position: relative;
+      animation: spin 30s linear infinite;
+      box-shadow: 0 0 40px rgba(63, 230, 214, 0.15);
+    }
+
+    .preview-orbit {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 320px;
+      height: 80px;
+      border: 1px dashed rgba(246, 166, 35, 0.25);
+      border-radius: 50%;
+      transform: translate(-50%, -50%) rotateX(65deg) rotateY(15deg);
+    }
+
+    .preview-orbit.inner {
+      width: 250px;
+      height: 60px;
+      border-color: rgba(63, 230, 214, 0.3);
+    }
+
+    .sat-dot {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--accent-cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent-cyan);
+    }
+    .sat-dot.debris {
+      background: var(--accent-amber);
+      box-shadow: 0 0 8px var(--accent-amber);
+    }
+
+    .sat-dot-1 { top: 12%; left: 45%; }
+    .sat-dot-2 { top: 40%; left: 88%; }
+    .sat-dot-3 { top: 80%; left: 20%; }
+    .sat-dot-4 { top: 60%; left: 5%; }
+
+    .preview-hud {
+      position: absolute;
+      bottom: 20px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 8px;
+      letter-spacing: 0.1em;
+      color: var(--accent-cyan);
+      background: rgba(4,6,15,0.85);
+      border: 1px solid var(--border-color);
+      padding: 8px 12px;
+      display: flex;
+      gap: 15px;
+    }
+
+    /* GRID DO PROJETO */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      margin-bottom: 100px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 30px;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .card:hover {
+      border-color: var(--accent-cyan);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(63, 230, 214, 0.05);
+    }
+
+    .card-icon {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      letter-spacing: 0.1em;
+      margin-bottom: 14px;
+      color: #fff;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 300;
+    }
+
+    /* ODS SECTION */
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 26px;
+      letter-spacing: 0.15em;
+      text-align: center;
+      margin-bottom: 50px;
+      text-transform: uppercase;
+    }
+
+    .section-title span {
+      color: var(--accent-cyan);
+    }
+
+    .ods-flex {
+      display: flex;
+      gap: 50px;
+      align-items: center;
+      margin-bottom: 100px;
+    }
+
+    .ods-desc-box {
+      flex: 1;
+    }
+
+    .ods-desc-box h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 18px;
+      margin-bottom: 16px;
+      letter-spacing: 0.05em;
+    }
+
+    .ods-desc-box p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      font-weight: 300;
+    }
+
+    .ods-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 10px 20px;
+      margin-right: 15px;
+      margin-bottom: 15px;
+    }
+
+    .ods-num {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+
+    .ods-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .ods-image-container {
+      width: 400px;
+      height: 250px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(63, 230, 214, 0.02);
+      box-shadow: inset 0 0 20px rgba(63,230,214,0.05);
+      position: relative;
+    }
+
+    /* MODELO DE NEGÓCIOS */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      margin-bottom: 100px;
+    }
+
+    .pricing-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 40px 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .pricing-card.premium {
+      border: 1px solid var(--accent-cyan);
+      box-shadow: 0 0 30px rgba(63, 230, 214, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pricing-card.premium::before {
+      content: 'RECOMENDADO';
+      position: absolute;
+      background: var(--accent-cyan);
+      color: #04060f;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 7px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      padding: 4px 30px;
+      transform: rotate(45deg);
+      top: 15px;
+      right: -25px;
+    }
+
+    .tier-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.25em;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .price {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+
+    .price span {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 300;
+    }
+
+    .features-list {
+      list-style: none;
+      margin-bottom: 30px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex-grow: 1;
+    }
+
+    .features-list li::before {
+      content: '✓ ';
+      color: var(--accent-cyan);
+      font-weight: bold;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 50px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    footer p {
+      margin-bottom: 15px;
+    }
+
+    .footer-links a {
+      color: var(--accent-cyan);
+      text-decoration: none;
+      margin: 0 15px;
+    }
+
+    /* ANIMATIONS */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 900px) {
+      .grid, .pricing-grid {
+        grid-template-columns: 1fr;
+      }
+      .ods-flex {
+        flex-direction: column;
+      }
+      .ods-image-container {
+        width: 100%;
+      }
+      .hero h1 {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-glow"></div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="container header-content">
+      <div class="logo-container">
+        <div class="logo-title">ORBITA</div>
+        <div class="logo-subtitle">ORBITAL TRAFFIC INTELLIGENCE</div>
+      </div>
+      <nav>
+        <a href="#solucao">A Solução</a>
+        <a href="#ods">ODS</a>
+        <a href="#tecnologia">Tecnologia</a>
+        <a href="#negocio">Modelo de Negócio</a>
+        <a href="http://localhost:5173" target="_blank" style="color: var(--accent-cyan);">Acessar Console</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="container hero">
+    <div class="hero-badge">GLOBAL SOLUTION 2026</div>
+    <h1>Prevenindo Colisões para um <span>Espaço Sustentável</span></h1>
+    <p class="hero-desc">
+      O ORBITA é um console de gerenciamento de tráfego espacial que utiliza inteligência artificial e mecânica orbital avançada (SGP4/Monte Carlo) para prever e mitigar riscos de colisão na órbita terrestre.
+    </p>
+    <a href="http://localhost:5173" target="_blank" class="cta-button">Iniciar Console Local</a>
+  </section>
+
+  <!-- PREVIEW CONSOLE -->
+  <section class="container" style="margin-bottom: 80px;">
+    <div class="preview-box">
+      <div class="preview-header">
+        <div class="window-dots">
+          <div class="window-dot red"></div>
+          <div class="window-dot yellow"></div>
+          <div class="window-dot green"></div>
+        </div>
+        <div class="preview-title">ORBITAL MONITOR [LIVE SIMULATOR]</div>
+        <div style="width: 30px;"></div>
+      </div>
+      <div class="preview-screen">
+        <div class="preview-globe"></div>
+        <div class="preview-orbit"></div>
+        <div class="preview-orbit inner"></div>
+        <div class="sat-dot sat-dot-1"></div>
+        <div class="sat-dot sat-dot-2"></div>
+        <div class="sat-dot sat-dot-3 debris"></div>
+        <div class="sat-dot sat-dot-4 debris"></div>
+        <div class="preview-hud">
+          <div>OBJETOS RASTREADOS: 17.926</div>
+          <div>RISCO DA FROTA: CRÍTICO</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- A SOLUÇÃO -->
+  <section class="container" id="solucao" style="margin-bottom: 80px;">
+    <h2 class="section-title">A <span>Solução</span> Orbital</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="card-icon">🛰️</div>
+        <h3 class="card-title">Propagação SGP4</h3>
+        <p class="card-desc">
+          Propagação de órbitas a partir de dados TLE em tempo real de forma otimizada para monitorar a frota inteira a 60 frames por segundo no cliente.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎛️</div>
+        <h3 class="card-title">Monte Carlo</h3>
+        <p class="card-desc">
+          Simulação estatística que projeta a elipse de incerteza da posição dos objetos para estimar com precisão a probabilidade matemática de colisão espacial.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧠</div>
+        <h3 class="card-title">Triagem por IA</h3>
+        <p class="card-desc">
+          Classificador Gradient Boosting que pondera múltiplos fatores físicos da órbita para categorizar e priorizar ameaças que demandam manobra imediata.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ODS SECTION -->
+  <section class="container" id="ods">
+    <h2 class="section-title">Compromisso com as <span>ODS</span></h2>
+    <div class="ods-flex">
+      <div class="ods-desc-box">
+        <h3>Sustentabilidade além da Terra</h3>
+        <p>
+          O espaço orbital é a infraestrutura invisível que sustenta a conectividade, a agricultura e o monitoramento climático do nosso planeta. Proteger essa região contra a reação em cadeia da Síndrome de Kessler (colisões sucessivas que inviabilizariam órbitas inteiras) é uma prioridade global.
+        </p>
+        <div>
+          <div class="ods-badge">
+            <span class="ods-num">09</span>
+            <span class="ods-label">Indústria, Inovação e Infraestrutura</span>
+          </div>
+          <div class="ods-badge">
+            <span class="ods-num">14</span>
+            <span class="ods-label">Vida na Água (Ambiente Global Estável)</span>
+          </div>
+        </div>
+      </div>
+      <div class="ods-image-container">
+        <svg width="150" height="150" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="30" stroke="rgba(63, 230, 214, 0.4)" stroke-width="1.5" stroke-dasharray="4 2"/>
+          <circle cx="50" cy="50" r="20" fill="rgba(63, 230, 214, 0.15)" stroke="var(--accent-cyan)" stroke-width="1"/>
+          <path d="M 50 15 L 50 35 M 50 65 L 50 85 M 15 50 L 35 50 M 65 50 L 85 50" stroke="var(--accent-cyan)" stroke-width="1"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODELO DE NEGÓCIOS -->
+  <section class="container" id="negocio" style="margin-bottom: 80px;">
+    <h2 class="section-title">Modelo de <span>Negócio (SaaS)</span></h2>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="tier-name">Free Tier</div>
+        <div class="price">US$ 0 <span>/ mês</span></div>
+        <ul class="features-list">
+          <li>Visualização pública de satélites</li>
+          <li>Feed de alertas globais básicos</li>
+          <li>Rastreamento de 1 ativo próprio</li>
+        </ul>
+        <a href="http://localhost:5173" target="_blank" class="cta-button" style="background:transparent; color:#fff; border-color:rgba(255,255,255,0.2); box-shadow:none;">Acessar</a>
+      </div>
+      <div class="pricing-card premium">
+        <div class="tier-name">Operator Pro</div>
+        <div class="price">US$ 4.900 <span>/ mês</span></div>
+        <ul class="features-list">
+          <li>Triagem por Inteligência Artificial</li>
+          <li>Integração total SGP4 e Monte Carlo</li>
+          <li>Alertas SMS/Slack imediatos para equipe</li>
+          <li>Rastreamento de até 15 ativos da frota</li>
+        </ul>
+        <a href="http://localhost:5173" target="_blank" class="cta-button">Ver Demonstração</a>
+      </div>
+      <div class="pricing-card">
+        <div class="tier-name">Enterprise / Govt</div>
+        <div class="price">Sob Consulta</div>
+        <ul class="features-list">
+          <li>API automatizada de desvio (manobras)</li>
+          <li>Propagador dedicado on-premise</li>
+          <li>Suporte de engenharia orbital 24/7</li>
+          <li>Frota ilimitada</li>
+        </ul>
+        <a href="mailto:contato@orbita.space" class="cta-button" style="background:transparent; color:#fff; border-color:rgba(255,255,255,0.2); box-shadow:none;">Contato</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 ORBITA. FIAP Global Solution — Engenharia de Tráfego de Satélites & Sustentabilidade Espacial.</p>
+      <div class="footer-links">
+        <a href="#solucao">A Solução</a>
+        <a href="#ods">ODS</a>
+        <a href="#negocio">Modelo de Negócio</a>
+        <a href="http://localhost:5173" target="_blank">Painel de Operações</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
