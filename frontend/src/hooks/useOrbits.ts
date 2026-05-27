@@ -87,7 +87,8 @@ export function useOrbits() {
           if (isDebris) {
             // #f6a623 (amber) -> RGB 246, 166, 35
             catalogCol[ci * 3] = 0.965;
-;
+            catalogCol[ci * 3 + 1] = 0.651;
+            catalogCol[ci * 3 + 2] = 0.137;
           } else {
             // #3fe6d6 (cyan) -> RGB 63, 230, 214
             catalogCol[ci * 3] = 0.247;
