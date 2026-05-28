@@ -8,6 +8,9 @@
 
 </div>
 
+<img width="1494" height="886" alt="image" src="https://github.com/user-attachments/assets/a0a83586-bb63-4f38-9d66-0021930e1344" />
+
+
 ---
 
 ## O que é o ORBITA?
